@@ -19,13 +19,7 @@ Value& GetRefStrict(map<Key, Value>& m, Key k)
 int main ()
 {
 	map<int, string> m = {{0, "value"}};
-	try {
-		string &item = GetRefStrict(m, 1);
-	} catch (runtime_error& r) {
-		cout << r.what();
-		exit(1);
-	}
+	string& item = GetRefStrict(m, 0);
 	item = "newvalue";
 	cout << m[0] << endl; // выведет newvalue
-	return 0;
 }
