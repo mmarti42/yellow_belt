@@ -110,4 +110,5 @@ int main()
 	for (const auto& x : Sqr(map_of_pairs)) {
 		cout << x.first << ' ' << x.second.first << ' ' << x.second.second << endl;
 	}
+	return 0;
 }
