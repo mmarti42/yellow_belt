@@ -7,16 +7,9 @@ using namespace std;
 
 template <typename T>
 vector<T> FindGreaterElements(const set<T>& elements, const T& border) {
-	vector<T> v;
-
 	auto it = find_if(elements.begin(), elements.end(),
 			[border](const T& elem){ return elem > border;});
-	if (it != elements.end()) {
-		while (it != elements.end()) {
-			v.push_back(*it++);
-		}
-	}
-	return v;
+	return {it, elements.end()};
 }
 
 int main() {
