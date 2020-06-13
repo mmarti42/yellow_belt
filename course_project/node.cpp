@@ -1,7 +1,7 @@
 #include "node.h"
 
 bool EmptyNode::Evaluate(const Date &date, const string &event) {
-	return false;
+	return true;
 }
 
 bool DateComparisonNode::Evaluate(const Date& date, const string& event) {

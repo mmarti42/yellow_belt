@@ -21,7 +21,7 @@ ostream& operator<< (ostream& os, const Date& d) {
 	return os;
 }
 
-Date ParseDate(istringstream& is) {
+Date ParseDate(istream& is) {
 	int year;
 	int month;
 	int day;

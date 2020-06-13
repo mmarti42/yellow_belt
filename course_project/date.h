@@ -15,4 +15,4 @@ bool operator ==(const Date& left, const Date& right);
 
 bool operator <(const Date& left, const Date& right);
 
-Date ParseDate(std::istringstream& is);
+Date ParseDate(std::istream& is) ;

@@ -2,24 +2,19 @@
 using namespace std;
 
 void Database::Add(const Date &date, const string &event) {
+	auto& p = date_event[date];
 
-	try {
-		vector<string>& v = date_event.at(date);
-		if (find(v.begin(), v.end(), event) == v.end())
-			v.push_back(event);
-	} catch (exception& e) {
-		date_event[date].push_back(event);
+	if (!p.second.count(event)) {
+		p.first.push_back(p.second.insert(event).first);
 	}
-	//event_date[event] = date;
 }
 
-void Database::Print(ostream& os) {
+void Database::Print(ostream& os) const {
 	for (const auto& item : date_event) {
-		os << item.first;
-		for (const auto& i : item.second) {
-			os << " " << i;
+		for (const auto& i : item.second.first) {
+			os << item.first << " " << *i;
+			os << endl;
 		}
-		os << endl;
 	}
 }
 
@@ -27,20 +22,21 @@ int Database::RemoveIf(const std::function<bool(const Date &, const std::string 
 	int count = 0;
 
 	for (auto it = date_event.begin(); it != date_event.end();) {
-		for (auto itv = it->second.begin(); itv != it->second.end();) {
-			if (func(it->first, *itv)) {
+		for (auto itv = it->second.first.begin() ; itv != it->second.first.end() ; ) {
+			if (func(it->first, **itv)) {
 				count++;
-				itv = it->second.erase(itv);
-				if (it->second.empty()) {
-					it = date_event.erase(it);
-					break ;
-				}
+				auto tmp = *itv;
+				itv = it->second.first.erase(itv);
+				it->second.second.erase(tmp);
 			} else {
 				itv++;
 			}
 		}
-		if (it != date_event.end())
+		if (it->second.first.empty()) {
+			it = date_event.erase(it);
+		} else {
 			it++;
+		}
 	}
 	return count;
 }
@@ -50,22 +46,26 @@ Database::FindIf(const std::function<bool(const Date &, const std::string &)> &f
 	vector<pair<Date, string> > v;
 
 	for (const auto& item : date_event) {
-		for (const auto& i : item.second) {
-			if (func(item.first, i)) {
-				v.emplace_back(item.first, i);
+		for (const auto& i : item.second.first) {
+			if (func(item.first, *i)) {
+				v.emplace_back(item.first, *i);
 			}
 		}
 	}
 	return v;
 }
 
-	std::pair<const Date, const std::string> Database::Last(const Date &date) const {
-	auto it = date_event.begin();
+string to_string(const Date& d) {
+	ostringstream s;
 
-	if (date < it->first)
+	s << d;
+	return s.str();
+}
+
+string Database::Last(const Date &date) const {
+	if (date_event.empty() || date < date_event.begin()->first)
 		throw (invalid_argument("No entries"));
-	while (!(date < it->first || date == it->first) && it != date_event.end())
-		it++;
+	auto it = date_event.upper_bound(date);
 	it--;
-	return {it->first, it->second.back()};
+	return {to_string(it->first) + " " + *it->second.first.back()};
 }
